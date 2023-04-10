@@ -1,0 +1,13 @@
+.favorite-list:not(:last-child) {
+	margin-bottom: 2rem;
+}
+
+.favorite-item {
+	display: flex;
+	justify-content: space-between;
+}
+
+.empty {
+	display: flex;
+	justify-content: center;
+}
