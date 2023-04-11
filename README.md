@@ -10,5 +10,5 @@
 
 - С помощью команды `npx cap add android` создает android версию в папку `android`
 - С помощью команды `npx cap open android` открывает проект в Android Studio
-- В Android Studio выбираете Build Build Bundle(s) / APK(s) Build APK(s)
+- В Android Studio выбираете Build --> Build Bundle(s) / APK(s) --> Build APK(s)
 - После файле будет лежать в проекте `android\app\build\outputs\apk\debug`
