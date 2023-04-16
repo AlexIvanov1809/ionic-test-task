@@ -11,6 +11,7 @@ import fetchData from '../utils/fetchData';
 import makingSetters from '../utils/makingSetters';
 import { ROOT_STORE } from '../constants/consts';
 import throttle from '../utils/throttle';
+import useLatest from '../hooks/useLatest';
 
 interface Props {
   children: ReactNode;
@@ -32,18 +33,17 @@ const BeersProvider = ({ children }: Props) => {
   const [beers, setBeers] = useState<IRootStore>(ROOT_STORE);
   const [present, dismiss] = useIonLoading();
   const handleBeersUpdate = makingSetters(beers, setBeers);
-  const fetchProps = {
+  const latestRef = useLatest({
     endpoint: `?page=${beers.page}&per_page=5`,
     dismiss,
     setBeersItems: handleBeersUpdate.setBeersItems,
     setError: handleBeersUpdate.setError,
-  };
-
+  });
   const fetching = useCallback(
     throttle(() => {
-      fetchData(fetchProps);
-    }, 1000),
-    [],
+      fetchData(latestRef.current);
+    }, 5000),
+    [latestRef],
   );
 
   useEffect(() => {

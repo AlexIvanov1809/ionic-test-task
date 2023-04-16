@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { IBeer } from '../types/beerType';
 import {
   IonButton,
@@ -18,39 +18,29 @@ import { heart, heartOutline } from 'ionicons/icons';
 import { useBeers, useBeersSetters } from '../context/BeersContext';
 import fetchData from '../utils/fetchData';
 import ErrorToast from '../components/ErrorToast/ErrorToast';
-import throttle from '../utils/throttle';
 
 const BeerPage = () => {
   const { id } = useParams<{ id: string }>();
   const beers = useBeers();
   const beersSetters = useBeersSetters();
   const [product, setProduct] = useState<null | IBeer>(null);
-  const [isFavorite, setIsFavorite] = useState<boolean>(
-    !!beersSetters.findFavorite(+id),
-  );
+  const [isFavorite, setIsFavorite] = useState<boolean>(false);
   const [present, dismiss] = useIonLoading();
-  const icon = isFavorite ? heart : heartOutline;
-
   const fetchProps = {
     endpoint: '/' + id,
     dismiss,
     setProduct,
     setError: beersSetters.setError,
   };
-  const fetching = useCallback(
-    throttle(() => {
-      fetchData(fetchProps);
-    }, 1000),
-    [],
-  );
 
   useEffect(() => {
     const beer = beersSetters.findBeer(+id);
+    setIsFavorite(!!beersSetters.findFavorite(+id));
     if (beer) {
       setProduct(beer);
     } else {
       present({ message: 'Loading...' });
-      fetching();
+      fetchData(fetchProps);
       beersSetters.setFavoritesBeers();
     }
 
@@ -97,7 +87,10 @@ const BeerPage = () => {
             </IonCardContent>
             <IonButton onClick={handleClick} expand="block">
               Add to favorites
-              <IonIcon slot="end" icon={icon}></IonIcon>
+              <IonIcon
+                slot="end"
+                icon={isFavorite ? heart : heartOutline}
+              ></IonIcon>
             </IonButton>
           </IonCard>
         )}
